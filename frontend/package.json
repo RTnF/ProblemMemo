@@ -10,11 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "hono": "^4.12.16",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@hono/vite-dev-server": "^0.25.3",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

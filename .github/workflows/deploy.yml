@@ -1,0 +1,46 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - main # mainブランチへのプッシュで発火
+
+permissions:
+  id-token: write # OIDC認証に必須
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          cd backend && npm install
+          cd ../frontend && npm install
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: CDK Deploy
+        run: |
+          cd backend
+          npx cdk deploy --all --require-approval never
+
+      - name: Build and Deploy Frontend
+        run: |
+          cd frontend
+          npm run build
+          aws s3 sync dist/ ${{ secrets.BUCKET_URL }} --delete
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DIST_ID }} --paths "/*"
