@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
+type Problem = {
+  "problem-id"?: string;
+  title: string;
+  url?: string;
+  submission_url?: string;
+  tags?: string[];
+  memo?: string;
+};
+
 // 環境変数に応じてオリジンを決定する
 const getApiDomain = () => {
   // AWS Lambda環境ではデフォルトで NODE_ENV が設定される
@@ -14,29 +23,27 @@ const getApiDomain = () => {
 const API_URL = getApiDomain();
 
 function App() {
-  const [message, setMessage] = useState<string>("Loading...");
+  const [problem, setProblem] = useState<Problem>({ title: "Loading..." });
 
   useEffect(() => {
-    fetch(`${API_URL}/api/hello`)
+    fetch(`${API_URL}/api/problems/ac-abc001-a`)
       .then((res) => res.text())
-      .then((data) => setMessage(data))
-      .catch((err) => setMessage("Error: " + err.message));
+      .then((data) => setProblem(JSON.parse(data)))
+      .catch(() => setProblem({ title: "Error!" }));
   }, []);
   return (
     <>
       <section id="center">
         <div>
           <p>AtCoder / ABC / ABC001 / A</p>
-          <h1>積雪深差</h1>
-          <p>Simple</p>
+          <h1>{problem.title}</h1>
+          <p>{problem.tags}</p>
           <p>
-            <a href="https://atcoder.jp/contests/abc001/tasks/abc001_1">問題</a>
+            <a href={problem.url}>問題</a>
             {" / "}
-            <a href="https://atcoder.jp/contests/abc001/submissions/75474831">
-              提出
-            </a>
+            <a href={problem.submission_url}>提出</a>
           </p>
-          <p>{message}</p>
+          <p>{problem.memo}</p>
         </div>
       </section>
     </>
