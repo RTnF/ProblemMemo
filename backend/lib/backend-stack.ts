@@ -26,6 +26,9 @@ export class BackendStack extends cdk.Stack {
     const fnUrl = fn.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
     })
+
+    problemsTable.grantReadData(fn);
+
     new cdk.CfnOutput(this, 'lambdaUrl', {
       value: fnUrl.url!,
     })
