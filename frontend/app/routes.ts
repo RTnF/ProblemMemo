@@ -1,0 +1,5 @@
+import { type RouteConfig, index, route } from "@react-router/dev/routes";
+
+export default [
+  route("problem-memo/:problem_id", "routes/home.tsx")
+] satisfies RouteConfig;

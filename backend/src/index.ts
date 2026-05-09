@@ -43,7 +43,7 @@ const clientConfig = isLocal
 
 const client = new DynamoDBClient(clientConfig)
 const docClient = DynamoDBDocumentClient.from(client)
-const TABLE_NAME = process.env.TABLE_NAME
+const TABLE_NAME = isLocal ? 'problems' : process.env.TABLE_NAME
 
 app.get('/api/problems/:problem_id', async (c) => {
   try {
