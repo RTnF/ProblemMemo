@@ -66,6 +66,8 @@ app.get('/api/problems/:problem_id', async (c) => {
     return c.json({ message: 'Internal Server Error' }, 500)
   }
 })
+// https://qiita.com/yasuaki9973/items/5b7590285f497708b374
+app.request('/api/problems/ac-abc001-a');
 
 // AWS Lambda用のエクスポート
 export const handler = handle(app)
