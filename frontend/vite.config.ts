@@ -7,5 +7,5 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
-  base: '/problem-memo',
+  base: '/problem-memo/',
 });

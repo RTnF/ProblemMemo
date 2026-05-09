@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import type { Route } from "./+types/home";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { ErrorBoundary } from "react-error-boundary";
 
 const BASE_URL =
   process.env.NODE_ENV === "production"
@@ -15,13 +17,11 @@ type Problem = {
   memo: string;
 };
 
-export default function Home({ params }: Route.ComponentProps) {
-  const { data } = useQuery({
-    queryKey: [params.problem_id],
+function Home2({ problemId }: { problemId: string }) {
+  const { data } = useSuspenseQuery({
+    queryKey: [problemId],
     queryFn: async () => {
-      const response = await fetch(
-        `${BASE_URL}/api/problems/${params.problem_id}`,
-      );
+      const response = await fetch(`${BASE_URL}/api/problems/${problemId}`);
       if (!response.ok) throw new Error("Failed to fetch");
       return response.json() as Promise<Problem>;
     },
@@ -30,12 +30,26 @@ export default function Home({ params }: Route.ComponentProps) {
   return (
     <>
       <p>{data?.problem_id}</p>
-      <h1>{data?.title}</h1>
+      <h1 className="text-2xl">{data?.title}</h1>
       <span>
-        <a href={data?.url}>問題</a>
-        <a href={data?.submission_url}>提出</a>
+        <a className="underline" href={data?.url}>
+          問題
+        </a>
+        <a className="underline" href={data?.submission_url}>
+          提出
+        </a>
       </span>
       <p>{data?.memo}</p>
     </>
+  );
+}
+
+export default function Home({ params }: Route.ComponentProps) {
+  return (
+    <ErrorBoundary fallback={<div>error</div>}>
+      <Suspense fallback={<div>loading...</div>}>
+        <Home2 problemId={params.problem_id} />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
