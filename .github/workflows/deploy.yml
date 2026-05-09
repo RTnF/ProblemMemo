@@ -45,5 +45,5 @@ jobs:
         run: |
           cd frontend
           npm run build
-          aws s3 sync dist/ ${{ secrets.BUCKET_URL }} --delete
+          aws s3 sync build/client/ ${{ secrets.BUCKET_URL }} --delete
           aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DIST_ID }} --paths "/*"
